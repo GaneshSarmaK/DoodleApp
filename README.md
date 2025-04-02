@@ -12,7 +12,19 @@ A minimalist and fun drawing app built entirely with **SwiftUI** — create smoo
 ## 🛠️ Built With
 
 - **SwiftUI** – Declarative UI framework by Apple.
-- **Canvas** – SwiftUI's drawing surface.
+- **Gestures** – iOS Gestures to track user activity on a doodle.
 - **MVVM Architecture** – Clean separation of logic and views.
+- **Swift data** – Local storage for doodle items.
 
-## 📸 Screenshots
+### ✅ Feature Checklist
+
+- [x] Text doodles
+- [x] Dynamic color selection for Text doodle
+- [x] Adjustable size for doodles
+- [x] Rotate and zoom functionality for Doodle items
+- [x] Local storage for Text doodles
+- [ ] Clear Canvas
+- [ ] Image doodles
+- [ ] Share doodle canvas with others 
+- [ ] Custom doodle colors or themes
+- [ ] More to come
