@@ -26,3 +26,7 @@ extension CGFloat{
         return .random(in: 0...1) * (UIScreen.main.bounds.height - 100)
     }
 }
+
+enum NavViews: Hashable {
+    case createDoodleView
+}

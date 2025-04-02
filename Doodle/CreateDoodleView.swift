@@ -17,7 +17,7 @@ struct CreateDoodleView: View {
     
     @State private var selectedColor: Color = .random
     
-    @Binding var path: [String]
+    @Binding var path: [NavViews]
     
     var body: some View {
         
@@ -67,7 +67,7 @@ struct CreateDoodleView: View {
     }
     
     func addNewTextItem() {
-        var newItem = DoodleItem(
+        let newItem = DoodleItem(
             text: textFieldInputText,
             colour: selectedColor,
             location: CGPoint(x: .randomWidth + 30, y: .randomHeight),
@@ -77,16 +77,17 @@ struct CreateDoodleView: View {
         
         modelContext.insert(newItem)
         
-        for index in 1...30 {
-            let newItem = DoodleItem(
-                text: "Item \(index)",
-                colour: .random,
-                location: CGPoint(x: .randomWidth + 30, y: .randomHeight),
-                scaleValue: 1.0,
-                rotation: .zero
-            )
-            modelContext.insert(newItem)
-        }
+        // Testing
+//        for index in 1...30 {
+//            let newItem = DoodleItem(
+//                text: "Item \(index)",
+//                colour: .random,
+//                location: CGPoint(x: .randomWidth + 30, y: .randomHeight),
+//                scaleValue: 1.0,
+//                rotation: .zero
+//            )
+//            modelContext.insert(newItem)
+//        }
         
         do {
             try modelContext.save()

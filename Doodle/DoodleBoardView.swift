@@ -18,7 +18,7 @@ struct DoodleBoardView: View {
     
 //    @State private var isInputViewPresented: Bool = false
     
-    @State private var path: [String] = []
+    @State private var path: [NavViews] = []
         
     var body: some View {
         NavigationStack(path: $path) {
@@ -33,8 +33,7 @@ struct DoodleBoardView: View {
                 
                 HStack {
                     Button(action: {
-                        path.append("InputView")
-    //                    isInputViewPresented = true
+                        path.append(.createDoodleView)
                     }, label: {
                         Text("Add new text")
                             .padding()
@@ -49,9 +48,9 @@ struct DoodleBoardView: View {
                 }
                 .padding()
             }
-            .navigationDestination(for: String.self) { destination in
-                if destination == "InputView" {
-                    InputView(path: $path)
+            .navigationDestination(for: NavViews.self) { destination in
+                if destination == .createDoodleView {
+                    CreateDoodleView(path: $path)
                 }
             }
         }
