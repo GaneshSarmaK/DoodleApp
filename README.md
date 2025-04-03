@@ -35,7 +35,7 @@ A minimalist and fun drawing app built entirely with **SwiftUI** — create smoo
 
   <p align="center">
         <strong>Text Doodles</strong><br/><br/>
-      <img src="https://github.com/user-attachments/assets/ed8855fc-15c8-484d-a9d5-aa7c8c8dbf75" width="250"/><br/>
+      <img src="https://github.com/user-attachments/assets/6e57673b-4a51-4097-8058-95d160d2b4cd" width="250"/><br/>
       </br>
       <sub>User can add a Doodle with text and custom colour (random by default) to the canvas at a random position and use gestures to customise it</sub>
   </p>
@@ -53,7 +53,7 @@ A minimalist and fun drawing app built entirely with **SwiftUI** — create smoo
 
   <p align="center">
       <strong>Delete and Reset</strong><br/><br/>
-      <img src="https://github.com/user-attachments/assets/6e57673b-4a51-4097-8058-95d160d2b4cd" width="250"/><br/>
+      <img src="https://github.com/user-attachments/assets/ed8855fc-15c8-484d-a9d5-aa7c8c8dbf75" width="250"/><br/>
       </br>
       <sub>Delete a specific Doodle or reset the entire canvas</sub>
   </p>
