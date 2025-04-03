@@ -16,25 +16,59 @@ struct DoodleBoardView: View {
     
     @Query private var doodleItemsOnBoard: [DoodleItem]
     
-//    @State private var isInputViewPresented: Bool = false
+    @State private var showConfirmation = false
+
+    @State private var path: [NavViews] = []
     
-    @State private var path: [String] = []
-        
     var body: some View {
         NavigationStack(path: $path) {
             VStack {
                 ZStack {
                     ForEach(doodleItemsOnBoard) { item in
-                        DoodleTextItemView(item: item)
+                        if item.isPhoto {
+                            DoodleImageItemView(item: item)
+                        } else {
+                            DoodleTextItemView(item: item)
+                        }
                     }
                 }
                 
                 Spacer()
                 
                 HStack {
+                    Spacer()
+                    
+                    Button(role: .destructive) {
+                        showConfirmation = true
+                    } label: {
+                        Text("Reset")
+                        Image(systemName: "arrow.counterclockwise")
+                    }
+                    .confirmationDialog("Are you sure you want to delete all data?",
+                                        isPresented: $showConfirmation,
+                                        titleVisibility: .visible) {
+                        Button("Delete Everything", role: .destructive) {
+                            for item in doodleItemsOnBoard {
+                                    if item.isPhoto {
+                                        ImageManager.deleteImageFromDocuments(filename: item.photoURL)
+                                    }
+                                }
+                            do {
+                                try modelContext.delete(model: DoodleItem.self)
+                            } catch {
+                                print("Failed to save after deletion: \(error)")
+                            }
+                        }
+                        Button("Cancel", role: .cancel) { }
+                    }
+                    
+                    //                .fullScreenCover(isPresented: $isInputViewPresented, content: {
+                    //                    InputView()
+                    //                })
+                }
+                .overlay(alignment: .center, content: {
                     Button(action: {
-                        path.append("InputView")
-    //                    isInputViewPresented = true
+                        path.append(.createDoodleView)
                     }, label: {
                         Text("Add new text")
                             .padding()
@@ -43,15 +77,13 @@ struct DoodleBoardView: View {
                     })
                     .clipShape(.capsule)
                     .shadow(color: colorScheme == .dark ? .white : .gray, radius: 2, x: 0.5, y: 0.5)
-    //                .fullScreenCover(isPresented: $isInputViewPresented, content: {
-    //                    InputView()
-    //                })
-                }
+                })
                 .padding()
             }
-            .navigationDestination(for: String.self) { destination in
-                if destination == "InputView" {
-                    InputView(path: $path)
+            .navigationDestination(for: NavViews.self) { destination in
+                switch destination {
+                    case .createDoodleView:
+                        CreateDoodleView(path: $path)
                 }
             }
         }
@@ -59,6 +91,7 @@ struct DoodleBoardView: View {
     
     func deleteDoodleItem(item: DoodleItem){
         withAnimation {
+            ImageManager.deleteImageFromDocuments(filename: item.photoURL)
             modelContext.delete(item)
             try? modelContext.save()
         }

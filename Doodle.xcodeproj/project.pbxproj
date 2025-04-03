@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4858B6B42D87415E0017B002 /* InputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4858B6B32D87415E0017B002 /* InputView.swift */; };
+		48A9816C2D9DA94300296527 /* CreateDoodleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A9816B2D9DA94300296527 /* CreateDoodleView.swift */; };
 		48D3F2B12D88396200394A51 /* DoodleTextItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D3F2B02D88395700394A51 /* DoodleTextItemView.swift */; };
 		48D3F2B32D883AB000394A51 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D3F2B22D883AAD00394A51 /* Utils.swift */; };
 		48E70B052D8423550098D969 /* DoodleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E70B042D8423550098D969 /* DoodleApp.swift */; };
@@ -15,10 +15,11 @@
 		48E70B0B2D8423580098D969 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 48E70B0A2D8423580098D969 /* Assets.xcassets */; };
 		48E70B0E2D8423580098D969 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 48E70B0D2D8423580098D969 /* Preview Assets.xcassets */; };
 		48E70B152D8444940098D969 /* DoodleItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E70B142D8444930098D969 /* DoodleItem.swift */; };
+		48EDE9012D9E910100E55C2C /* DoodleImageItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48EDE9002D9E90FA00E55C2C /* DoodleImageItemView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		4858B6B32D87415E0017B002 /* InputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputView.swift; sourceTree = "<group>"; };
+		48A9816B2D9DA94300296527 /* CreateDoodleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateDoodleView.swift; sourceTree = "<group>"; };
 		48D3F2B02D88395700394A51 /* DoodleTextItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoodleTextItemView.swift; sourceTree = "<group>"; };
 		48D3F2B22D883AAD00394A51 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		48E70B012D8423550098D969 /* Doodle.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Doodle.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -27,6 +28,7 @@
 		48E70B0A2D8423580098D969 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		48E70B0D2D8423580098D969 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		48E70B142D8444930098D969 /* DoodleItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoodleItem.swift; sourceTree = "<group>"; };
+		48EDE9002D9E90FA00E55C2C /* DoodleImageItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoodleImageItemView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,8 +64,9 @@
 				48D3F2B22D883AAD00394A51 /* Utils.swift */,
 				48E70B042D8423550098D969 /* DoodleApp.swift */,
 				48D3F2B02D88395700394A51 /* DoodleTextItemView.swift */,
+				48EDE9002D9E90FA00E55C2C /* DoodleImageItemView.swift */,
 				48E70B062D8423550098D969 /* DoodleBoardView.swift */,
-				4858B6B32D87415E0017B002 /* InputView.swift */,
+				48A9816B2D9DA94300296527 /* CreateDoodleView.swift */,
 				48E70B142D8444930098D969 /* DoodleItem.swift */,
 				48E70B0A2D8423580098D969 /* Assets.xcassets */,
 				48E70B0C2D8423580098D969 /* Preview Content */,
@@ -150,9 +153,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				48E70B152D8444940098D969 /* DoodleItem.swift in Sources */,
+				48EDE9012D9E910100E55C2C /* DoodleImageItemView.swift in Sources */,
 				48D3F2B12D88396200394A51 /* DoodleTextItemView.swift in Sources */,
-				4858B6B42D87415E0017B002 /* InputView.swift in Sources */,
 				48E70B072D8423550098D969 /* DoodleBoardView.swift in Sources */,
+				48A9816C2D9DA94300296527 /* CreateDoodleView.swift in Sources */,
 				48E70B052D8423550098D969 /* DoodleApp.swift in Sources */,
 				48D3F2B32D883AB000394A51 /* Utils.swift in Sources */,
 			);

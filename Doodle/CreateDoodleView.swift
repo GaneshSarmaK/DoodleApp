@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import PhotosUI
 
 struct CreateDoodleView: View {
     
@@ -17,32 +18,69 @@ struct CreateDoodleView: View {
     
     @State private var selectedColor: Color = .random
     
-    @Binding var path: [String]
+    @State private var photoPickerItem: PhotosPickerItem?
+    
+    @State var photoData: Data?
+    
+    @State private var selectedMode: DoodleMode = .text
+    
+    @Binding var path: [NavViews]
     
     var body: some View {
         
-        VStack {
-            TextField("Enter text to add", text: $textFieldInputText)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .frame(maxWidth: 300)
-                .padding()
-                .shadow(color: colorScheme == .dark ? .white : .gray, radius: 2, x: 0.5, y: 0.5)
+        VStack(spacing: 20) {
+            
+            Picker("Selection", selection: $selectedMode) {
+                ForEach(DoodleMode.allCases) {
+                    Text($0.rawValue)
+                        .tag($0)
+                }
+            }
+            .pickerStyle(.segmented)
+            .padding()
+            
+            Spacer()
             
             
-            HStack{
-                Spacer()
+            
+            if selectedMode == .photo {
+                (photoData?.toImage ?? Image(systemName: "person.circle"))
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 200)
+                    .clipShape(.circle)
                 
-                Text("Pick a colour")
-                    .padding()
+                PhotosPicker("Select image", selection: $photoPickerItem, matching: .images)
                 
-                ColorPicker("Pick a Color", selection: $selectedColor)
-                    .padding()
-                    .labelsHidden()
+            } else {
+                TextField("Enter text to add", text: $textFieldInputText)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .frame(maxWidth: 300)
+                    .shadow(color: colorScheme == .dark ? .white : .gray, radius: 2, x: 0.5, y: 0.5)
                 
-                Spacer()
+                HStack{
+                    Spacer()
+                    
+                    Text("Pick a colour")
+                        .padding()
+                    
+                    ColorPicker("Pick a Color", selection: $selectedColor)
+                        .padding()
+                        .labelsHidden()
+                    
+                    Spacer()
+                }
             }
             
-            Button(action: addNewTextItem,
+            Spacer()
+            
+            Button(action: {
+                if selectedMode == .photo {
+                    addNewDoodleItem(isPhoto: true, photoData: photoData)
+                } else {
+                    addNewDoodleItem(text: textFieldInputText)
+                }
+            },
                    label: {
                 Text("Add")
                     .frame(maxWidth: 100)
@@ -52,41 +90,61 @@ struct CreateDoodleView: View {
             })
             .clipShape(.capsule)
             .shadow(color: colorScheme == .dark ? .white : .gray, radius: 2, x: 0.5, y: 0.5)
-            .disabled(textFieldInputText.isEmpty)
+            .disabled(selectedMode == .text ? textFieldInputText.isEmpty : photoData == nil)
             
         }
-        .navigationTitle(Text("Create Doodle"))
         .toolbar {
             ToolbarItem(placement: .principal) { // Centers & styles title
-                Text("Input")
+                Text(NavViews.createDoodleView.navTitle)
                     .font(.body)
                     .bold()
             }
         }
         .navigationBarTitleDisplayMode(.inline)
+        .onChange(of: photoPickerItem) {
+            Task {
+                if let imageData = try? await photoPickerItem?.loadTransferable(type: Data.self) {
+                    photoData = imageData
+                } else {
+                    print("Photo failed")
+                }
+            }
+            print(selectedMode.rawValue)
+        }
+        .onChange(of: selectedMode) {
+            print(selectedMode.rawValue)
+        }
     }
     
-    func addNewTextItem() {
-        var newItem = DoodleItem(
-            text: textFieldInputText,
+    func addNewDoodleItem(isPhoto: Bool = false, photoData: Data? = nil, text: String = "") {
+        var photoURL = ""
+        if isPhoto {
+            photoURL = ImageManager.saveImageToDocuments(data: photoData!) ?? ""
+        }
+        let newItem = DoodleItem(
+            text: text,
             colour: selectedColor,
             location: CGPoint(x: .randomWidth + 30, y: .randomHeight),
             scaleValue: 1.0,
-            rotation: .zero
+            rotation: .zero,
+            isPhoto: isPhoto,
+            photoURL: photoURL
         )
+        
         
         modelContext.insert(newItem)
         
-        for index in 1...30 {
-            let newItem = DoodleItem(
-                text: "Item \(index)",
-                colour: .random,
-                location: CGPoint(x: .randomWidth + 30, y: .randomHeight),
-                scaleValue: 1.0,
-                rotation: .zero
-            )
-            modelContext.insert(newItem)
-        }
+        // Testing
+        //        for index in 1...30 {
+        //            let newItem = DoodleItem(
+        //                text: "Item \(index)",
+        //                colour: .random,
+        //                location: CGPoint(x: .randomWidth + 30, y: .randomHeight),
+        //                scaleValue: 1.0,
+        //                rotation: .zero
+        //            )
+        //            modelContext.insert(newItem)
+        //        }
         
         do {
             try modelContext.save()
@@ -95,6 +153,8 @@ struct CreateDoodleView: View {
         }
         path.removeLast()
     }
+    
+    
     
 }
 

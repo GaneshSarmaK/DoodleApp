@@ -21,15 +21,19 @@ final class DoodleItem: Identifiable {
     var colourRed: Double
     var colourGreen: Double
     var colourBlue: Double
+    var isPhoto: Bool
+    var photoURL: String
 
-    init(text: String, colour: Color, location: CGPoint, scaleValue: CGFloat, rotation: Angle) {
+    init(text: String, colour: Color, location: CGPoint, scaleValue: CGFloat, rotation: Angle, isPhoto: Bool, photoURL: String) {
 //        self.id
         self.text = text
         self.locationX = location.x
         self.locationY = location.y
         self.scaleValue = scaleValue
         self.rotation = rotation.radians
-
+        self.isPhoto = isPhoto
+        self.photoURL = photoURL
+        
         // Store color components
         if let uiColour = UIColor(colour).cgColor.components {
             self.colourRed = Double(uiColour[0])
@@ -70,11 +74,13 @@ final class DoodleItem: Identifiable {
 extension DoodleItem: Equatable {
     static func == (lhs: DoodleItem, rhs: DoodleItem) -> Bool {
         return lhs.id == rhs.id &&
+        lhs.isPhoto == rhs.isPhoto &&
         lhs.text == rhs.text &&
         lhs.colour == rhs.colour &&
         lhs.location == rhs.location &&
         lhs.scaleValue == rhs.scaleValue &&
-        lhs.rotation == rhs.rotation
+        lhs.rotation == rhs.rotation &&
+        lhs.photoURL == rhs.photoURL
     }
 }
 
