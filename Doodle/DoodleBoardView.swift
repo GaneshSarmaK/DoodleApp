@@ -70,7 +70,7 @@ struct DoodleBoardView: View {
                     Button(action: {
                         path.append(.createDoodleView)
                     }, label: {
-                        Text("Add new text")
+                        Text("Add new Doodle")
                             .padding()
                             .foregroundColor(.white)
                             .background(.blue)
