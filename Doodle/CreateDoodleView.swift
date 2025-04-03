@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import PhotosUI
 
 struct CreateDoodleView: View {
     
@@ -17,30 +18,62 @@ struct CreateDoodleView: View {
     
     @State private var selectedColor: Color = .random
     
+    @State private var photoPickerItem: PhotosPickerItem?
+    
+    @State var selectedPhoto: Image?
+    
+    @State private var selectedMode: DoodleMode = .text
+    
     @Binding var path: [NavViews]
     
     var body: some View {
         
-        VStack {
-            TextField("Enter text to add", text: $textFieldInputText)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .frame(maxWidth: 300)
-                .padding()
-                .shadow(color: colorScheme == .dark ? .white : .gray, radius: 2, x: 0.5, y: 0.5)
+        VStack(spacing: 20) {
             
-            
-            HStack{
-                Spacer()
-                
-                Text("Pick a colour")
-                    .padding()
-                
-                ColorPicker("Pick a Color", selection: $selectedColor)
-                    .padding()
-                    .labelsHidden()
-                
-                Spacer()
+            Picker("Selection", selection: $selectedMode) {
+                ForEach(DoodleMode.allCases) {
+                    Text($0.rawValue)
+                        .tag($0)
+                }
             }
+            .pickerStyle(.segmented)
+            .padding()
+            
+            Spacer()
+            
+            
+            
+            if selectedMode == .photo {
+                (selectedPhoto ?? Image(systemName: "person.circle") )
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 200)
+                    .clipShape(.circle)
+                                
+                PhotosPicker("Select image", selection: $photoPickerItem, matching: .images)
+                    .padding()
+            } else {
+                TextField("Enter text to add", text: $textFieldInputText)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .frame(maxWidth: 300)
+                    .shadow(color: colorScheme == .dark ? .white : .gray, radius: 2, x: 0.5, y: 0.5)
+                
+                
+                HStack{
+                    Spacer()
+                    
+                    Text("Pick a colour")
+                        .padding()
+                    
+                    ColorPicker("Pick a Color", selection: $selectedColor)
+                        .padding()
+                        .labelsHidden()
+                    
+                    Spacer()
+                }
+            }
+            
+            Spacer()
             
             Button(action: addNewTextItem,
                    label: {
@@ -55,15 +88,23 @@ struct CreateDoodleView: View {
             .disabled(textFieldInputText.isEmpty)
             
         }
-        .navigationTitle(Text("Create Doodle"))
         .toolbar {
             ToolbarItem(placement: .principal) { // Centers & styles title
-                Text("Input")
+                Text(NavViews.createDoodleView.navTitle)
                     .font(.body)
                     .bold()
             }
         }
         .navigationBarTitleDisplayMode(.inline)
+        .onChange(of: photoPickerItem) {
+            Task {
+                if let image = try? await photoPickerItem?.loadTransferable(type: Image.self) {
+                    selectedPhoto = image
+                } else {
+                    print("Photo failed")
+                }
+            }
+        }
     }
     
     func addNewTextItem() {
@@ -78,16 +119,16 @@ struct CreateDoodleView: View {
         modelContext.insert(newItem)
         
         // Testing
-//        for index in 1...30 {
-//            let newItem = DoodleItem(
-//                text: "Item \(index)",
-//                colour: .random,
-//                location: CGPoint(x: .randomWidth + 30, y: .randomHeight),
-//                scaleValue: 1.0,
-//                rotation: .zero
-//            )
-//            modelContext.insert(newItem)
-//        }
+        //        for index in 1...30 {
+        //            let newItem = DoodleItem(
+        //                text: "Item \(index)",
+        //                colour: .random,
+        //                location: CGPoint(x: .randomWidth + 30, y: .randomHeight),
+        //                scaleValue: 1.0,
+        //                rotation: .zero
+        //            )
+        //            modelContext.insert(newItem)
+        //        }
         
         do {
             try modelContext.save()

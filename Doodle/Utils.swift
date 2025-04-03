@@ -27,6 +27,20 @@ extension CGFloat{
     }
 }
 
-enum NavViews: Hashable {
+enum NavViews: String, Hashable {
     case createDoodleView
+    
+    var navTitle: String {
+        switch self {
+        case .createDoodleView:
+            return "Create Doodle View"
+        }
+    }
+}
+
+enum DoodleMode: String, CaseIterable, Identifiable {
+    case text = "Text"
+    case photo = "Photo"
+    
+    var id: String { self.rawValue }
 }

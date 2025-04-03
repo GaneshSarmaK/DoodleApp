@@ -16,10 +16,10 @@ struct DoodleBoardView: View {
     
     @Query private var doodleItemsOnBoard: [DoodleItem]
     
-//    @State private var isInputViewPresented: Bool = false
-    
+    @State private var showConfirmation = false
+
     @State private var path: [NavViews] = []
-        
+    
     var body: some View {
         NavigationStack(path: $path) {
             VStack {
@@ -32,6 +32,32 @@ struct DoodleBoardView: View {
                 Spacer()
                 
                 HStack {
+                    Spacer()
+                    
+                    Button(role: .destructive) {
+                        showConfirmation = true
+                    } label: {
+                        Text("Reset")
+                        Image(systemName: "arrow.counterclockwise")
+                    }
+                    .confirmationDialog("Are you sure you want to delete all data?",
+                                        isPresented: $showConfirmation,
+                                        titleVisibility: .visible) {
+                        Button("Delete Everything", role: .destructive) {
+                            do {
+                                try modelContext.delete(model: DoodleItem.self)
+                            } catch {
+                                print("Failed to save after deletion: \(error)")
+                            }
+                        }
+                        Button("Cancel", role: .cancel) { }
+                    }
+                    
+                    //                .fullScreenCover(isPresented: $isInputViewPresented, content: {
+                    //                    InputView()
+                    //                })
+                }
+                .overlay(alignment: .center, content: {
                     Button(action: {
                         path.append(.createDoodleView)
                     }, label: {
@@ -42,15 +68,13 @@ struct DoodleBoardView: View {
                     })
                     .clipShape(.capsule)
                     .shadow(color: colorScheme == .dark ? .white : .gray, radius: 2, x: 0.5, y: 0.5)
-    //                .fullScreenCover(isPresented: $isInputViewPresented, content: {
-    //                    InputView()
-    //                })
-                }
+                })
                 .padding()
             }
             .navigationDestination(for: NavViews.self) { destination in
-                if destination == .createDoodleView {
-                    CreateDoodleView(path: $path)
+                switch destination {
+                    case .createDoodleView:
+                        CreateDoodleView(path: $path)
                 }
             }
         }
