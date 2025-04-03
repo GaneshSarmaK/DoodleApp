@@ -11,20 +11,18 @@ import PhotosUI
 struct CreateDoodleView: View {
     
     @Environment(\.modelContext) private var modelContext
-    
     @Environment(\.colorScheme) var colorScheme
+    @Environment(DoodleItemViewModel.self) var viewModel
     
     @State private var textFieldInputText: String = ""
-    
     @State private var selectedColor: Color = .random
-    
     @State private var photoPickerItem: PhotosPickerItem?
-    
     @State var photoData: Data?
-    
     @State private var selectedMode: DoodleMode = .text
     
     @Binding var path: [NavViews]
+    
+    
     
     var body: some View {
         
@@ -75,11 +73,14 @@ struct CreateDoodleView: View {
             Spacer()
             
             Button(action: {
-                if selectedMode == .photo {
-                    addNewDoodleItem(isPhoto: true, photoData: photoData)
-                } else {
-                    addNewDoodleItem(text: textFieldInputText)
+                Task {
+                    if selectedMode == .photo {
+                        await viewModel.addDoodle(photoData: photoData)
+                    } else {
+                        await viewModel.addDoodle(text: textFieldInputText, colour: selectedColor)
+                    }
                 }
+                path.removeLast()
             },
                    label: {
                 Text("Add")
@@ -116,43 +117,43 @@ struct CreateDoodleView: View {
         }
     }
     
-    func addNewDoodleItem(isPhoto: Bool = false, photoData: Data? = nil, text: String = "") {
-        var photoURL = ""
-        if isPhoto {
-            photoURL = ImageManager.saveImageToDocuments(data: photoData!) ?? ""
-        }
-        let newItem = DoodleItem(
-            text: text,
-            colour: selectedColor,
-            location: CGPoint(x: .randomWidth + 30, y: .randomHeight),
-            scaleValue: 1.0,
-            rotation: .zero,
-            isPhoto: isPhoto,
-            photoURL: photoURL
-        )
-        
-        
-        modelContext.insert(newItem)
-        
-        // Testing
-        //        for index in 1...30 {
-        //            let newItem = DoodleItem(
-        //                text: "Item \(index)",
-        //                colour: .random,
-        //                location: CGPoint(x: .randomWidth + 30, y: .randomHeight),
-        //                scaleValue: 1.0,
-        //                rotation: .zero
-        //            )
-        //            modelContext.insert(newItem)
-        //        }
-        
-        do {
-            try modelContext.save()
-        } catch {
-            print("Error saving: \(error)")
-        }
-        path.removeLast()
-    }
+//    func addNewDoodleItem(photoData: Data? = nil, text: String = nil) {
+//        var photoURL = ""
+//        if isPhoto {
+//            photoURL = ImageManager.saveImageToDocuments(data: photoData!) ?? ""
+//        }
+//        let newItem = DoodleItem(
+//            text: text,
+//            colour: selectedColor,
+//            location: CGPoint(x: .randomWidth + 30, y: .randomHeight),
+//            scaleValue: 1.0,
+//            rotation: .zero,
+//            isPhoto: isPhoto,
+//            photoURL: photoURL
+//        )
+//        
+//        
+//        modelContext.insert(newItem)
+//        
+//        // Testing
+//        //        for index in 1...30 {
+//        //            let newItem = DoodleItem(
+//        //                text: "Item \(index)",
+//        //                colour: .random,
+//        //                location: CGPoint(x: .randomWidth + 30, y: .randomHeight),
+//        //                scaleValue: 1.0,
+//        //                rotation: .zero
+//        //            )
+//        //            modelContext.insert(newItem)
+//        //        }
+//        
+//        do {
+//            try modelContext.save()
+//        } catch {
+//            print("Error saving: \(error)")
+//        }
+//        path.removeLast()
+//    }
     
     
     

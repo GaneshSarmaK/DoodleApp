@@ -1,47 +1,45 @@
 //
-//  DoodleImageItemView.swift
+//  DoodleTextItemView.swift
 //  Doodle
 //
-//  Created by NVR4GET on 3/4/2025.
+//  Created by NVR4GET on 17/3/2025.
 //
-
 import SwiftUI
 import SwiftData
-import PhotosUI
 
-struct DoodleImageItemView: View {
+struct DoodleTextItemView: View {
     
     @Environment(\.modelContext) private var modelContext
-    
     @Environment(\.colorScheme) var colorScheme
+    @Environment(DoodleItemViewModel.self) var viewModel
     
     var item: DoodleItem
     
+//    @State var doodleitemViewModel: DoodleItemViewModel = DoodleItemViewModel()
     @State private var lastScale: CGFloat = 1.0
     
     var body: some View {
         
-        ImageManager.loadImageFromDocuments(filename: item.photoURL)
-            .resizable()
-            .aspectRatio(contentMode: .fit)
-            .frame(width: 200)
-            .clipShape(.circle)
+        Text(item.text ?? "")
             .padding()
+            .font(.title)
             .scaleEffect(item.scaleValue)
             .rotationEffect(Angle(radians: item.rotation))
+            .foregroundColor(item.colour)
+            .shadow(color: colorScheme == .dark ? .white : .gray, radius: 0.5, x: 0.5, y: 0.5)
             .contextMenu {
                 Button(role: .destructive) {
-                    ImageManager.deleteImageFromDocuments(filename: item.photoURL)
-                    deleteDoodleItem(item: item)
+                    Task {
+                        await viewModel.delete(doodle: item)
+                    }
                 } label: {
                     Label("Delete", systemImage: "trash")
                 }
             }
             .position(item.location)
-            .highPriorityGesture(
+            .gesture(
                 DragGesture()
                     .onChanged { value in
-                        
                         withAnimation(.easeInOut){
                             item.location = value.location
                         }
@@ -67,15 +65,4 @@ struct DoodleImageItemView: View {
                     }
             )
     }
-    
-    func deleteDoodleItem(item: DoodleItem){
-        withAnimation {
-            modelContext.delete(item)
-            try? modelContext.save()
-        }
-    }
-    
-   
 }
-
-

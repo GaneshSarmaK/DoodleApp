@@ -10,7 +10,18 @@ import SwiftData
 
 @main
 struct DoodleApp: App {
-    var sharedModelContainer: ModelContainer = {
+    
+
+    var body: some Scene {
+        WindowGroup {
+            DoodleBoardView()
+        }
+        .modelContainer(.sharedModelContainer)
+    }
+}
+
+extension ModelContainer {
+   static var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             DoodleItem.self,
         ])
@@ -22,12 +33,4 @@ struct DoodleApp: App {
             fatalError("Could not create ModelContainer: \(error)")
         }
     }()
-
-    var body: some Scene {
-        WindowGroup {
-            DoodleBoardView()
-        }
-        .modelContainer(sharedModelContainer)
-//        .modelContext(sharedModelContainer.mainContext)
-    }
 }
