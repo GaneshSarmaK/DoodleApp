@@ -1,43 +1,47 @@
 //
-//  DoodleTextItemView.swift
+//  DoodleImageItemView.swift
 //  Doodle
 //
-//  Created by NVR4GET on 17/3/2025.
+//  Created by NVR4GET on 3/4/2025.
 //
+
 import SwiftUI
 import SwiftData
+import PhotosUI
 
-struct DoodleTextItemView: View {
+struct DoodleImageItemView: View {
     
     @Environment(\.modelContext) private var modelContext
-    
     @Environment(\.colorScheme) var colorScheme
-    
-    var item: DoodleItem
+    @Environment(DoodleItemViewModel.self) var viewModel
     
     @State private var lastScale: CGFloat = 1.0
     
+    var item: DoodleItem
+    
     var body: some View {
         
-        Text(item.text)
+        ImageManager.loadImageFromDocuments(filename: item.photoURL!)
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .frame(width: 200)
+            .clipShape(.circle)
             .padding()
-            .font(.title)
             .scaleEffect(item.scaleValue)
             .rotationEffect(Angle(radians: item.rotation))
-            .foregroundColor(item.colour)
-            .shadow(color: colorScheme == .dark ? .white : .gray, radius: 0.5, x: 0.5, y: 0.5)
             .contextMenu {
                 Button(role: .destructive) {
-                    deleteDoodleItem(item: item)
+                    Task {
+                        await viewModel.delete(doodle: item)
+                    }
                 } label: {
                     Label("Delete", systemImage: "trash")
                 }
             }
             .position(item.location)
-            .gesture(
+            .highPriorityGesture(
                 DragGesture()
                     .onChanged { value in
-                        
                         withAnimation(.easeInOut){
                             item.location = value.location
                         }
@@ -63,11 +67,6 @@ struct DoodleTextItemView: View {
                     }
             )
     }
-    
-    func deleteDoodleItem(item: DoodleItem){
-        withAnimation {
-            modelContext.delete(item)
-            try? modelContext.save()
-        }
-    }
 }
+
+

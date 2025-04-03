@@ -11,9 +11,9 @@ import SwiftUI
 
 @Model
 final class DoodleItem: Identifiable {
-    //Private(set) sets scope of the Setter methods to private. get remians public
     @Attribute(.unique) private(set) var id: String = UUID().uuidString
-    var text: String
+    var text: String?
+    var photoURL: String?
     var locationX: Double
     var locationY: Double
     var scaleValue: Double
@@ -21,17 +21,14 @@ final class DoodleItem: Identifiable {
     var colourRed: Double
     var colourGreen: Double
     var colourBlue: Double
-    var isPhoto: Bool
-    var photoURL: String
-
-    init(text: String, colour: Color, location: CGPoint, scaleValue: CGFloat, rotation: Angle, isPhoto: Bool, photoURL: String) {
-//        self.id
+    
+    init(text: String? = nil, colour: Color, location: CGPoint, scaleValue: CGFloat, rotation: Angle, photoURL: String? = nil) {
+        
         self.text = text
         self.locationX = location.x
         self.locationY = location.y
         self.scaleValue = scaleValue
         self.rotation = rotation.radians
-        self.isPhoto = isPhoto
         self.photoURL = photoURL
         
         // Store color components
@@ -45,7 +42,9 @@ final class DoodleItem: Identifiable {
             self.colourBlue = 0
         }
     }
+}
 
+extension DoodleItem {
     var location: CGPoint {
         get { CGPoint(x: locationX, y: locationY) }
         set {
@@ -74,7 +73,6 @@ final class DoodleItem: Identifiable {
 extension DoodleItem: Equatable {
     static func == (lhs: DoodleItem, rhs: DoodleItem) -> Bool {
         return lhs.id == rhs.id &&
-        lhs.isPhoto == rhs.isPhoto &&
         lhs.text == rhs.text &&
         lhs.colour == rhs.colour &&
         lhs.location == rhs.location &&
