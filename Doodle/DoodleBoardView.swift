@@ -25,7 +25,11 @@ struct DoodleBoardView: View {
             VStack {
                 ZStack {
                     ForEach(doodleItemsOnBoard) { item in
-                        DoodleTextItemView(item: item)
+                        if item.isPhoto {
+                            DoodleImageItemView(item: item)
+                        } else {
+                            DoodleTextItemView(item: item)
+                        }
                     }
                 }
                 
@@ -44,6 +48,11 @@ struct DoodleBoardView: View {
                                         isPresented: $showConfirmation,
                                         titleVisibility: .visible) {
                         Button("Delete Everything", role: .destructive) {
+                            for item in doodleItemsOnBoard {
+                                    if item.isPhoto {
+                                        ImageManager.deleteImageFromDocuments(filename: item.photoURL)
+                                    }
+                                }
                             do {
                                 try modelContext.delete(model: DoodleItem.self)
                             } catch {
@@ -82,6 +91,7 @@ struct DoodleBoardView: View {
     
     func deleteDoodleItem(item: DoodleItem){
         withAnimation {
+            ImageManager.deleteImageFromDocuments(filename: item.photoURL)
             modelContext.delete(item)
             try? modelContext.save()
         }

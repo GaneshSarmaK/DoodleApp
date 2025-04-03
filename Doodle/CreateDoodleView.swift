@@ -20,7 +20,7 @@ struct CreateDoodleView: View {
     
     @State private var photoPickerItem: PhotosPickerItem?
     
-    @State var selectedPhoto: Image?
+    @State var photoData: Data?
     
     @State private var selectedMode: DoodleMode = .text
     
@@ -44,20 +44,19 @@ struct CreateDoodleView: View {
             
             
             if selectedMode == .photo {
-                (selectedPhoto ?? Image(systemName: "person.circle") )
+                (photoData?.toImage ?? Image(systemName: "person.circle"))
                     .resizable()
                     .scaledToFit()
                     .frame(width: 200)
                     .clipShape(.circle)
-                                
+                
                 PhotosPicker("Select image", selection: $photoPickerItem, matching: .images)
-                    .padding()
+                
             } else {
                 TextField("Enter text to add", text: $textFieldInputText)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .frame(maxWidth: 300)
                     .shadow(color: colorScheme == .dark ? .white : .gray, radius: 2, x: 0.5, y: 0.5)
-                
                 
                 HStack{
                     Spacer()
@@ -75,7 +74,13 @@ struct CreateDoodleView: View {
             
             Spacer()
             
-            Button(action: addNewTextItem,
+            Button(action: {
+                if selectedMode == .photo {
+                    addNewDoodleItem(isPhoto: true, photoData: photoData)
+                } else {
+                    addNewDoodleItem(text: textFieldInputText)
+                }
+            },
                    label: {
                 Text("Add")
                     .frame(maxWidth: 100)
@@ -85,7 +90,7 @@ struct CreateDoodleView: View {
             })
             .clipShape(.capsule)
             .shadow(color: colorScheme == .dark ? .white : .gray, radius: 2, x: 0.5, y: 0.5)
-            .disabled(textFieldInputText.isEmpty)
+            .disabled(selectedMode == .text ? textFieldInputText.isEmpty : photoData == nil)
             
         }
         .toolbar {
@@ -98,23 +103,34 @@ struct CreateDoodleView: View {
         .navigationBarTitleDisplayMode(.inline)
         .onChange(of: photoPickerItem) {
             Task {
-                if let image = try? await photoPickerItem?.loadTransferable(type: Image.self) {
-                    selectedPhoto = image
+                if let imageData = try? await photoPickerItem?.loadTransferable(type: Data.self) {
+                    photoData = imageData
                 } else {
                     print("Photo failed")
                 }
             }
+            print(selectedMode.rawValue)
+        }
+        .onChange(of: selectedMode) {
+            print(selectedMode.rawValue)
         }
     }
     
-    func addNewTextItem() {
+    func addNewDoodleItem(isPhoto: Bool = false, photoData: Data? = nil, text: String = "") {
+        var photoURL = ""
+        if isPhoto {
+            photoURL = ImageManager.saveImageToDocuments(data: photoData!) ?? ""
+        }
         let newItem = DoodleItem(
-            text: textFieldInputText,
+            text: text,
             colour: selectedColor,
             location: CGPoint(x: .randomWidth + 30, y: .randomHeight),
             scaleValue: 1.0,
-            rotation: .zero
+            rotation: .zero,
+            isPhoto: isPhoto,
+            photoURL: photoURL
         )
+        
         
         modelContext.insert(newItem)
         
@@ -137,6 +153,8 @@ struct CreateDoodleView: View {
         }
         path.removeLast()
     }
+    
+    
     
 }
 
